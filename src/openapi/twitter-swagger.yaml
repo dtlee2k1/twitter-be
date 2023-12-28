@@ -5,12 +5,55 @@ info:
     email: leducthai2001@gmail.com
   version: 1.0.0
 servers:
+  - url: https://twitter-clone-api-m1zv.onrender.com
   - url: http://localhost:4000
+
 tags:
   - name: users
-    description: Everything about your Users
-
+    description: Operations about users
+  - name: medias
+    description: Operations about medias
+  - name: tweets
+    description: Operations about tweets
+  - name: bookmarks
+    description: Operations about bookmarks
+  - name: likes
+    description: Operations about likes
+  - name: search
+    description: Operations about search
+  - name: conversations
+    description: Operations about conversations
 paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Register a new user
+      description: User will receive an email to verify after registering
+      operationId: register
+      requestBody:
+        description: Register information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBody'
+        required: true
+      responses:
+        '200':
+          description: Register success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Register success
+                  result:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+
+        '422':
+          description: Invalid input
   /users/login:
     post:
       tags:
@@ -41,6 +84,224 @@ paths:
 
         '422':
           description: Invalid input
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Logout account
+      description: Logout account from the system
+      operationId: logout
+      security:
+        - BearedAuth: []
+      requestBody:
+        description: Logout information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
+        required: true
+      responses:
+        '200':
+          description: Logout success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logout success
+        '401':
+          description: Unauthorized
+  /users/refresh-token:
+    post:
+      tags:
+        - users
+      summary: Refresh token
+      description: Refresh access token for user when it expires
+      operationId: refreshToken
+      security:
+        - BearedAuth: []
+      requestBody:
+        description: Refresh token information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
+        required: true
+      responses:
+        '200':
+          description: Refresh token success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Refresh token successfully
+                  result:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+        '401':
+          description: Unauthorized
+        '404':
+          description: NotFound
+  /users/verify-email:
+    post:
+      tags:
+        - users
+      summary: Verify email
+      description: User will receive an email confirmation to verify after registering
+      operationId: verifyEmail
+      requestBody:
+        description: Verify email information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email_verify_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
+        required: true
+      responses:
+        '200':
+          description: Email verify success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email verify success
+                  result:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+        '401':
+          description: Unauthorized
+        '404':
+          description: NotFound
+  /users/resend-verify-email:
+    post:
+      tags:
+        - users
+      summary: Resend verify email
+      description: User will again receive an email confirmation to verify
+      operationId: resendVerifyEmail
+      security:
+        - BearedAuth: []
+      responses:
+        '200':
+          description: Resend verification email success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Resend verification email success
+        '404':
+          description: NotFound
+  /users/forgot-password:
+    post:
+      tags:
+        - users
+      summary: Forgot password
+      description: User will receive a link in user's email to reset password
+      operationId: forgotPassword
+      requestBody:
+        description: Forgot password information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: twittertest2k1@gmail.com
+        required: true
+      responses:
+        '200':
+          description: Check email to reset password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Check email to reset password
+        '422':
+          description: UnprocessableEntity
+        '404':
+          description: NotFound
+  /users/verify-forgot-password:
+    post:
+      tags:
+        - users
+      summary: Verify forgot password
+      description: Verify user via the link that user receive in email
+      operationId: verifyForgotPassword
+      requestBody:
+        description: Verify forgot password information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forgot_password_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
+        required: true
+      responses:
+        '200':
+          description: Verify forgot password success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Verify forgot password successfully
+        '401':
+          description: Unauthorized
+  /users/reset-password:
+    post:
+      tags:
+        - users
+      summary: Reset password
+      description: Set new password on the client side via the forgot password link in email
+      operationId: resetPassword
+      requestBody:
+        description: Reset password information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordBody'
+        required: true
+      responses:
+        '200':
+          description: Reset password success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Reset password successfully
+        '422':
+          description: UnprocessableEntity
   /users/me:
     get:
       tags:
@@ -75,24 +336,55 @@ paths:
                     example: Access token is required
 components:
   schemas:
+    RegisterBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Test Lee
+        email:
+          type: string
+          example: twittertest2k1@gmail.com
+        password:
+          type: string
+          example: Test123!
+        confirm_password:
+          type: string
+          example: Test123!
+        date_of_birth:
+          type: string
+          format: ISO8601
+          example: 2001-09-10T00:00:00.000Z
     LoginBody:
       type: object
       properties:
         email:
           type: string
-          example: leducthai2k@gmail.com
+          example: test@gmail.com
         password:
           type: string
-          example: T1nhy3ul4th3m4?
+          example: Test123!
+    ResetPasswordBody:
+      type: object
+      properties:
+        forgot_password_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
+        password:
+          type: string
+          example: NewPassword123!
+        confirm_password:
+          type: string
+          example: NewPassword123!
     SuccessAuthentication:
       type: object
       properties:
         access_token:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU3ZjNhODhmZWEzZWIyZWI2Zjg2ZmFkIiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInZlcmlmeSI6MSwiaWF0IjoxNzAzNDQ1ODMwLCJleHAiOjE3MDM1MzIyMzB9.0MKS1y18fek-cxYLgEWL4NSjb_BaUT9Vp6Wed7aR3uI
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInZlcmlmeSI6MSwiaWF0IjoxNzAzODIwNjk3LCJleHAiOjE3MDM5MDcwOTd9.Eoru1vPtRqYi41TB8R4L0ABI_pUyZCvydPKA3FdCd0U
         refresh_token:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU3ZjNhODhmZWEzZWIyZWI2Zjg2ZmFkIiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzQ0NTgzMCwiZXhwIjoxNzM0OTgxODMwfQ.XgCpJBde5aMLllTesdT4K978eVu4Kr4yaKtUxmP7IPE
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU4ZTI1Y2JhNzZkYTQ5MzU4MTU5Njc3IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJ2ZXJpZnkiOjEsImlhdCI6MTcwMzgyMDY5NywiZXhwIjoxNzM1MzU2Njk3fQ.5zfWsqtjwhkDCivkhElOeBjBw4u3mHunCamzvrftP9k
     User:
       type: object
       properties:

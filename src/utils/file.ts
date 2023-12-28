@@ -39,7 +39,7 @@ export const handleUploadImage = async (req: Request) => {
         return reject(err)
       }
 
-      if (Object.keys(files).length === 0) {
+      if (!Object.keys(files).length) {
         return reject(new Error(MediasMessages.FileIsEmpty))
       }
       return resolve(files.image as File[])
@@ -70,7 +70,7 @@ export const handleUploadVideo = async (req: Request) => {
         return reject(err)
       }
 
-      if (Object.keys(files).length === 0) {
+      if (!Object.keys(files).length) {
         return reject(new Error(MediasMessages.FileIsEmpty))
       }
 

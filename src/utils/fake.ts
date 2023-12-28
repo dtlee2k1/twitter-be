@@ -11,9 +11,9 @@ import databaseService from '~/services/database.services'
 import { hashPassword } from '~/utils/crypto'
 
 // Mật khẩu cho các fake user
-const PASSWORD = 'T1nhy3ul4th3m4?'
+const PASSWORD = 'Test123!'
 // ID tài khoản default dùng để follow người khác
-const MYID = new ObjectId('6574ae2c8adb1a251de9fc25')
+const MYID = new ObjectId('658e25cba76da49358159677')
 
 // Số lượng user được tạo, mỗi user sẽ mặc định tweet 2 cái
 const USER_COUNT = 1000
@@ -62,7 +62,7 @@ const insertMultipleUsers = async (users: RegisterReqBody[]) => {
         new User({
           ...user,
           _id: user_id,
-          username: `user${user_id.toString()}`,
+          username: `user_${user_id.toString()}`,
           password: hashPassword(user.password),
           date_of_birth: new Date(user.date_of_birth),
           verify: UserVerifyStatus.Verified

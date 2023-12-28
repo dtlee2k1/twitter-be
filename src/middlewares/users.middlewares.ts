@@ -14,7 +14,6 @@ import { REGEX_USERNAME } from '~/constants/regex'
 import { hashPassword } from '~/utils/crypto'
 import { UsersMessages } from '~/constants/messages'
 import { verifyAccessToken } from '~/utils/commons'
-import { env } from 'process'
 import { envConfig } from '~/constants/config'
 
 // Chứa các file chứa các hàm xử lý middleware, như validate, check token, ...
@@ -337,7 +336,10 @@ export const forgotPasswordValidator = validate(
             const user = await userService.checkEmailExist(value)
 
             if (user == null) {
-              throw new Error(UsersMessages.UserNotFound)
+              throw new ErrorWithStatus({
+                message: UsersMessages.UserNotFound,
+                status: HttpStatusCode.NotFound
+              })
             }
 
             // set user info vào request
