@@ -441,15 +441,15 @@ paths:
       security:
         - BearedAuth: []
       requestBody:
-        description: Follow other user by username
+        description: Follow other user by user_id. Use `6570698bc6a6e9d4b146e7ed`,`6571f62586e0461c0f16dbb9` and `6571f64f86e0461c0f16dbbc` for testing.
         content:
           application/json:
             schema:
               type: object
               properties:
-                username:
+                followed_user_id:
                   type: string
-                  example: user_6570698bc6a6e9d4b146e7ed
+                  example: 6570698bc6a6e9d4b146e7ed
         required: true
       responses:
         '200':
@@ -464,7 +464,7 @@ paths:
                     example: Follow successfully
         '409':
           description: Cannot follow yourself
-  /users/follow/{username}:
+  /users/follow/{user_id}:
     delete:
       tags:
         - users
@@ -474,9 +474,9 @@ paths:
       security:
         - BearedAuth: []
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: The username that needs to be executed. Use `user_6570698bc6a6e9d4b146e7ed` for testing.
+          description: The user_id that needs to be executed. Use `6570698bc6a6e9d4b146e7ed`,`6571f62586e0461c0f16dbb9` and `6571f64f86e0461c0f16dbbc` for testing.
           required: true
           schema:
             type: string

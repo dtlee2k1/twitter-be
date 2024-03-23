@@ -62,8 +62,13 @@ initFolder()
 // Sử dụng middleware để parse dữ liệu (`JSON` hoặc `URL-encoded forms`) từ body của POST request
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+
+app.get('/ping', (_req, res) => {
+  res.send('pong')
+})
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-// Sử dụng routing trong usersRouter khi các yêu cầu được gửi đến đường dẫn "/users"
+
 app.use('/users', usersRouter)
 // Medias route
 app.use('/medias', mediasRouter)
@@ -87,7 +92,6 @@ app.use(defaultErrorHandler)
 // init Socket Server
 initSocket(httpServer)
 
-// Lắng nghe các yêu cầu đến cổng 4000
 httpServer.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
